@@ -6,7 +6,7 @@ import movieRouter from "./routes/movieRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 
 config();
-connectDB();
+await connectDB();
 
 const app = express();
 
