@@ -24,7 +24,9 @@ const server = app.listen(PORT, () => {
 });
 
 process.on("unhandledRejection", (err: unknown) => {
-  console.error(`Unhandled Rejection: ${(err as Error)?.message}`);
+  console.error(
+    `Unhandled Rejection: ${err instanceof Error ? err.message : String(err)}`
+  );
   server.close(async () => {
     await disconnectDB();
     process.exit(1);
@@ -32,7 +34,9 @@ process.on("unhandledRejection", (err: unknown) => {
 });
 
 process.on("uncaughtException", async (err: unknown) => {
-  console.error(`Uncaught Exception: ${(err as Error)?.message}`);
+  console.error(
+    `Uncaught Exception: ${err instanceof Error ? err.message : String(err)}`
+  );
   await disconnectDB();
   process.exit(1);
 });
