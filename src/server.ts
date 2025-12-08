@@ -23,16 +23,20 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-process.on("unhandledRejection", (err) => {
-  console.error(`Unhandled Rejection: ${err.message}`);
+process.on("unhandledRejection", (err: unknown) => {
+  console.error(
+    `Unhandled Rejection: ${err instanceof Error ? err.message : String(err)}`
+  );
   server.close(async () => {
     await disconnectDB();
     process.exit(1);
   });
 });
 
-process.on("uncaughtException", async (err) => {
-  console.error(`Uncaught Exception: ${err.message}`);
+process.on("uncaughtException", async (err: unknown) => {
+  console.error(
+    `Uncaught Exception: ${err instanceof Error ? err.message : String(err)}`
+  );
   await disconnectDB();
   process.exit(1);
 });
