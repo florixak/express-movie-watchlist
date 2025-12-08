@@ -2,11 +2,15 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
 
-let prismaInstance;
-let pool;
+let prismaInstance: PrismaClient | null = null;
+let pool: Pool | null = null;
 
-const connectDB = async () => {
+export const connectDB = async (): Promise<void> => {
   try {
+    if (!process.env.DATABASE_URL) {
+      throw new Error("DATABASE_URL is not defined");
+    }
+
     if (!pool) {
       pool = new Pool({
         connectionString: process.env.DATABASE_URL,
@@ -15,26 +19,25 @@ const connectDB = async () => {
       const adapter = new PrismaPg(pool);
       prismaInstance = new PrismaClient({ adapter });
     }
-
+    if (!prismaInstance) {
+      throw new Error("PrismaClient initialization failed");
+    }
     await prismaInstance.$connect();
     console.log("DB Connected via Prisma");
   } catch (error) {
-    console.error(`Database connection error: ${error.message}`);
-    console.error(error);
+    console.error(`Database connection error: ${(error as Error).message}`);
     process.exit(1);
   }
 };
 
-const disconnectDB = async () => {
+export const disconnectDB = async (): Promise<void> => {
   if (prismaInstance) await prismaInstance.$disconnect();
   if (pool) await pool.end();
 };
 
-const getPrisma = () => {
+export const getPrisma = (): PrismaClient => {
   if (!prismaInstance) {
     throw new Error("Prisma not initialized. Call connectDB() first.");
   }
   return prismaInstance;
 };
-
-export { getPrisma, connectDB, disconnectDB };

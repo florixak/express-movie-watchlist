@@ -1,6 +1,7 @@
+import { Request, Response } from "express";
 import { getPrisma } from "../config/db.js";
 
-const register = async (req, res) => {
+const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -21,7 +22,7 @@ const register = async (req, res) => {
   // const hashedPassword = await hashPassword(password);
 };
 
-const login = async (req, res) => {
+const login = async (req: Request, res: Response) => {
   return res.json({ message: "Login route" });
 };
 

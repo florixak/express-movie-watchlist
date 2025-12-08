@@ -23,7 +23,7 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-process.on("unhandledRejection", (err) => {
+process.on("unhandledRejection", (err: Error) => {
   console.error(`Unhandled Rejection: ${err.message}`);
   server.close(async () => {
     await disconnectDB();
@@ -31,7 +31,7 @@ process.on("unhandledRejection", (err) => {
   });
 });
 
-process.on("uncaughtException", async (err) => {
+process.on("uncaughtException", async (err: Error) => {
   console.error(`Uncaught Exception: ${err.message}`);
   await disconnectDB();
   process.exit(1);
