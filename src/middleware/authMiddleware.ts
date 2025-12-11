@@ -20,11 +20,11 @@ const authMiddleware = async (
   if (!token) {
     return res.status(401).json({ error: "No token provided" });
   }
+  if (!process.env.JWT_SECRET) {
+    console.error("JWT_SECRET is not defined in environment variables");
+    return res.status(500).json({ error: "Internal server error" });
+  }
   try {
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is not defined in environment variables");
-    }
-
     const { id } = jwt.verify(token, process.env.JWT_SECRET as string) as {
       id: string;
     };
