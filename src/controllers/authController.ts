@@ -15,7 +15,7 @@ const register = async (req: Request, res: Response) => {
   }
 
   const userExists = await getPrisma().user.findUnique({
-    where: { email: email },
+    where: { email },
   });
 
   if (userExists) {
@@ -43,8 +43,8 @@ const register = async (req: Request, res: Response) => {
     data: {
       user: {
         id: user.id,
-        name: name,
-        email: email,
+        name,
+        email,
       },
       token,
     },
@@ -62,7 +62,7 @@ const login = async (req: Request, res: Response) => {
   }
 
   const user = await getPrisma().user.findUnique({
-    where: { email: email },
+    where: { email },
   });
 
   if (!user) {
