@@ -84,17 +84,20 @@ const updateWatchlistItem = async (req: Request, res: Response) => {
   if (!existingItem) {
     return res.status(404).json({ error: "Watchlist item not found" });
   }
+  try {
+    const updatedItem = await getPrisma().watchlistItem.update({
+      where: { userId_movieId: { userId, movieId } },
+      data: {
+        status,
+        rating,
+        notes,
+      },
+    });
 
-  const updatedItem = await getPrisma().watchlistItem.update({
-    where: { userId_movieId: { userId, movieId } },
-    data: {
-      status,
-      rating,
-      notes,
-    },
-  });
-
-  res.status(200).json({ status: "success", data: updatedItem });
+    res.status(200).json({ status: "success", data: updatedItem });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update watchlist item" });
+  }
 };
 
 export { addToWatchlist, deleteFromWatchlist, updateWatchlistItem };
