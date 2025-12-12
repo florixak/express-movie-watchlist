@@ -1,5 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "@prisma/client";
+import { Movie, PrismaClient, User } from "@prisma/client";
 import { config } from "dotenv";
 import { Pool } from "pg";
 
@@ -8,16 +8,15 @@ config();
 let prismaInstance: PrismaClient | null = null;
 let pool: Pool | null = null;
 
-const creatorId = "c6cfc79c-22f4-482d-9b25-f5a02e9a5b83";
+interface MovieData extends Omit<Movie, "id" | "createdAt"> {}
 
-type MovieData = {
-  title: string;
-  overview: string | null;
-  releaseYear: number;
-  genres: string[];
-  runtime: number | null;
-  posterUrl: string | null;
-  createdBy: string;
+const creatorId = "c6cfc79c-22f4-482d-9b25-f5a02e9a5b83";
+const creatorUser: User = {
+  id: creatorId,
+  email: "seedadmin@example.com",
+  name: "Seed Admin",
+  password: "securepassword",
+  createdAt: new Date(),
 };
 
 const movies: MovieData[] = [
@@ -71,6 +70,18 @@ export const main = async (): Promise<void> => {
 
   const adapter = new PrismaPg(pool);
   prismaInstance = new PrismaClient({ adapter });
+
+  const creatorExists = await prismaInstance.user.findUnique({
+    where: { id: creatorId },
+  });
+
+  if (!creatorExists) {
+    console.log("Creating creator user...");
+    await prismaInstance.user.create({
+      data: creatorUser,
+    });
+    console.log(`Created creator user with email: ${creatorUser.email}`);
+  }
 
   for (const movie of movies) {
     await prismaInstance.movie.create({
