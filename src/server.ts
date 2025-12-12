@@ -2,7 +2,7 @@ import express from "express";
 import { config } from "dotenv";
 import { connectDB, disconnectDB } from "./config/db.js";
 
-import movieRouter from "./routes/movieRoutes.js";
+import watchlistRouter from "./routes/watchlistRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 
 config();
@@ -15,8 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes
-app.use("/movie", movieRouter);
 app.use("/auth", authRouter);
+app.use("/watchlist", watchlistRouter);
 
 const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
